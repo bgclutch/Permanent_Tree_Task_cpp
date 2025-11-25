@@ -131,8 +131,8 @@ private:
             auto old_node = old_nodes[i];
             auto new_node = new_nodes[i];
             
-            if (i < went_left.size()) {
-                if (went_left[i]) {
+            if (i < directions.size()) {
+                if (directions[i]) {
                     new_node->set_right(old_node->get_right());
                 } else {
                     new_node->set_left(old_node->get_left());
