@@ -21,24 +21,24 @@ enum class FindFlags {
 
 template <typename KeyType, typename Compare = std::less<KeyType>>
 class BinarySearchTree final {
-private:
+ private:
     class Node : public std::enable_shared_from_this<Node> {
-    private:
+     private:
         const KeyType value_;
         std::weak_ptr<Node> parent_;
         std::shared_ptr<Node> left_;
         std::shared_ptr<Node> right_;
 
-    public:
+     public:
         Node(const KeyType& value,
              std::weak_ptr<Node> parent = std::weak_ptr<Node>(),
-             std::shared_ptr<Node> left = nullptr, 
+             std::shared_ptr<Node> left = nullptr,
              std::shared_ptr<Node> right = nullptr)
             : value_{value}, parent_{parent}, left_{left}, right_{right} {}
 
         KeyType get_value() const {
             return value_;
-        } 
+        }
 
         void set_right(std::shared_ptr<Node> right) noexcept {
             right_ = right;
@@ -66,14 +66,14 @@ private:
     Compare comp_;
     std::shared_ptr<Node> root_ = nullptr;
 
-public:
+ public:
     BinarySearchTree() = default;
     BinarySearchTree(std::shared_ptr<Node> root) : root_{std::move(root)} {}
 
     using find_flag = FindFlags;
     using find_res  = std::pair<std::shared_ptr<Node>, find_flag>;
 
-private:
+ private:
     std::shared_ptr<Node> copy_path(const KeyType& key, std::vector<KeyType>& path) const {
         if (!root_) {
             return std::make_shared<Node>(key);
@@ -119,7 +119,7 @@ private:
         if (!old_nodes.empty()) {
             auto parent_new = new_nodes.back();
             auto new_node = std::make_shared<Node>(key);
-            
+
             if (directions.back()) {
                 parent_new->set_left(new_node);
             } else {
@@ -130,7 +130,7 @@ private:
         for (size_t i = 0; i < new_nodes.size(); ++i) {
             auto old_node = old_nodes[i];
             auto new_node = new_nodes[i];
-            
+
             if (i < directions.size()) {
                 if (directions[i]) {
                     new_node->set_right(old_node->get_right());
@@ -143,7 +143,7 @@ private:
         return new_root;
     }
 
-public:
+ public:
     void insert(const KeyType& value) {
         if (!root_) {
             root_ = std::make_shared<Node>(value);
@@ -190,7 +190,7 @@ public:
             auto new_root = std::make_shared<Node>(key);
             return { BinarySearchTree{new_root}, {} };
         }
-        
+
         std::vector<KeyType> path;
         auto new_root = copy_path(key, path);
         return { BinarySearchTree{new_root}, path };
@@ -220,15 +220,15 @@ std::ostream& operator<<(std::ostream& os, const BinarySearchTree<KeyType, Compa
 
 template <typename KeyType, typename Compare = std::less<KeyType>>
 class PersistentTree final {
-private:
+ private:
     using BST = BinarySearchTree<KeyType, Compare>;
     std::shared_ptr<BST> current_version_ = std::make_shared<BST>();
     std::shared_ptr<BST> prev_version_ = nullptr;
 
-public:
+ public:
     PersistentTree() = default;
 
-    void insert_k(const KeyType& key) { 
+    void insert_k(const KeyType& key) {
         prev_version_ = nullptr;
         auto [new_tree, path] = current_version_->insert_with_path_copying(key);
         current_version_ = std::make_shared<BST>(std::move(new_tree));
@@ -238,7 +238,7 @@ public:
         prev_version_ = nullptr;
         prev_version_ = current_version_;
         auto [new_tree, path] = current_version_->insert_with_path_copying(key);
-        current_version_ = std::make_shared<BST>(std::move(new_tree));
+        current_version_ = std::make_shared<BST>(new_tree);
         return path;
     }
 
