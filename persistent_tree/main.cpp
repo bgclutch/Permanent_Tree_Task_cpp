@@ -30,7 +30,8 @@ int main() {
                 std::cerr << "WRONG GIVEN KEY -> " << newKey << "\n";
                 clearInput();
             }
-            utils::print_container(tree.insert_s(newKey));
+            std::vector answer = tree.insert_s(newKey);
+            utils::print_container(answer.begin(), answer.end());
         }
         else if (request == tree::rollback_request) {
             tree.rollback();

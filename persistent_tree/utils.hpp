@@ -1,13 +1,14 @@
 #pragma once 
 
 #include <algorithm>
+#include <iterator>
+#include <iostream>
 
 namespace utils {
 
-template <class Container>
-void print_container(const Container& c) {
-    std::for_each(c.begin(), c.end(), 
-                [](const typename Container::value_type x) { std::cout << x << " "; });
+template <class Iterator>
+void print_container(const Iterator begin, const Iterator end) {
+    std::copy(begin, end, std::ostream_iterator<typename std::iterator_traits<Iterator>::value_type>(std::cout, " "));
 }
 
 }
