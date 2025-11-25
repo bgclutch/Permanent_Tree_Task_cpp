@@ -24,7 +24,7 @@ int main() {
             if (request != tree::key_request) {
                 std::cerr << "WRONG REQUEST -> " << request << "\n";
                 clearInput();
-            } 
+            }
             int newKey;
             while (!(std::cin >> newKey)) {
                 std::cerr << "WRONG GIVEN KEY -> " << newKey << "\n";
